@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ff5c8a">
+  <meta name="robots" content="noindex, nofollow">
+  <title>El álbum de Molly</title>
+  <meta property="og:title" content="Un álbum solo para ti">
+  <meta property="og:description" content="Solo una persona tiene la llave.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='55' r='40' fill='%23f4893b' stroke='%234a2414' stroke-width='6'/><circle cx='36' cy='52' r='9' fill='%233a1c10'/><circle cx='64' cy='52' r='9' fill='%233a1c10'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&family=Shantell+Sans:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Borde blanco troquelado + sombra para todo lo que sea sticker -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="troquel" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="4" result="grueso"/>
+      <feFlood flood-color="#fff"/>
+      <feComposite in2="grueso" operator="in" result="borde"/>
+      <feOffset in="grueso" dx="2" dy="4" result="sombraPos"/>
+      <feFlood flood-color="#3b1830" flood-opacity=".28"/>
+      <feComposite in2="sombraPos" operator="in" result="sombra"/>
+      <feMerge><feMergeNode in="sombra"/><feMergeNode in="borde"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </svg>
+
+  <main id="escena">
+    <!-- Puerta: el álbum cerrado con Pochita de broche -->
+    <section class="pantalla activa" id="puerta">
+      <div class="tapa">
+        <span class="cinta cinta-a" aria-hidden="true"></span>
+        <div class="tapa-etiqueta">
+          <p class="mano">un álbum hecho a mano</p>
+          <h1>Solo una persona<br>puede abrirlo</h1>
+        </div>
+        <div class="broche" id="puerta-pochita"></div>
+        <form id="form-llave" class="etiqueta-form" autocomplete="off">
+          <label>Usuario
+            <input id="usuario" name="usuario" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Tu nombre" required>
+          </label>
+          <label>Contraseña
+            <span class="campo-clave">
+              <input id="clave" name="clave" type="password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="La llave secreta" required>
+              <button type="button" class="ver-clave" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg></button>
+            </span>
+          </label>
+          <button class="boton" id="abrir" type="submit">Abrir el álbum</button>
+          <p class="mensaje" id="mensaje-puerta" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Cuenta regresiva -->
+    <section class="pantalla" id="espera">
+      <div class="tapa tapa-espera">
+        <div class="tapa-etiqueta">
+          <p class="mano">todavía no, impaciente</p>
+          <h2>Se abre el<br><em>26 de octubre</em></h2>
+        </div>
+        <div class="reloj">
+          <div class="pegote rosa"><b id="r-d">0</b><span>días</span></div>
+          <div class="pegote menta"><b id="r-h">00</b><span>horas</span></div>
+          <div class="pegote lila"><b id="r-m">00</b><span>min</span></div>
+          <div class="pegote naranja"><b id="r-s">00</b><span>seg</span></div>
+        </div>
+        <div class="broche" id="espera-pochita"></div>
+        <p class="mano nota">Pochita cuida tu regalo hasta medianoche.</p>
+      </div>
+    </section>
+
+    <!-- El álbum: páginas que se pasan una por una -->
+    <section class="pantalla" id="album" aria-roledescription="álbum">
+      <div class="libro" id="libro"></div>
+      <nav class="navegacion">
+        <button class="nav-btn" id="atras" aria-label="Página anterior"><svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <p class="contador" id="contador">1 / 1</p>
+        <button class="nav-btn" id="adelante" aria-label="Página siguiente"><svg viewBox="0 0 24 24"><path d="m9 4 8 8-8 8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </nav>
+      <button class="musica" id="musica" aria-label="Música"><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="17" cy="16" r="3" fill="currentColor"/></svg></button>
+    </section>
+  </main>
+
+  <!-- Visor grande de fotos y recuerdos -->
+  <div class="visor" id="visor" hidden>
+    <figure class="visor-foto">
+      <img id="visor-img" alt="">
+      <figcaption><b id="visor-titulo"></b><span id="visor-texto"></span><small id="visor-pie"></small></figcaption>
+    </figure>
+    <button class="visor-cerrar" id="visor-cerrar" aria-label="Cerrar">×</button>
+  </div>
+
+  <!-- Formulario para pegar un recuerdo nuevo -->
+  <dialog class="hoja-recuerdo" id="dialogo-recuerdo">
+    <form id="form-recuerdo" method="dialog">
+      <h3>Pegar un recuerdo</h3>
+      <label class="subir-foto" id="subir-foto">
+        <input type="file" id="r-foto" accept="image/*">
+        <img id="r-vista" alt="" hidden>
+        <span id="r-foto-texto">Toca para elegir una foto<br><small>(opcional)</small></span>
+      </label>
+      <label>Título<input id="r-titulo" maxlength="60" placeholder="Ej: la primera llamada" required></label>
+      <label>¿Qué pasó?<textarea id="r-texto" maxlength="1200" rows="4" placeholder="Cuéntalo como quieras..."></textarea></label>
+      <div class="fila">
+        <label>Fecha<input id="r-fecha" type="date"></label>
+        <fieldset class="quien">
+          <legend>Lo pega</legend>
+          <label><input type="radio" name="quien" value="Molly" checked><span>Molly</span></label>
+          <label><input type="radio" name="quien" value="jmv2004"><span>jmv2004</span></label>
+        </fieldset>
+      </div>
+      <p class="mensaje" id="r-mensaje" role="status" aria-live="polite"></p>
+      <div class="fila botones">
+        <button class="boton suave" type="button" id="r-cancelar">Cancelar</button>
+        <button class="boton" type="submit" id="r-guardar">Pegarlo</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="capa-efectos" id="capa-efectos" aria-hidden="true"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
