@@ -192,9 +192,11 @@ function irA(indice) {
   actual = indice;
   const total = paginas.length;
   document.querySelectorAll(".pagina").forEach((el, j) => {
-    el.classList.toggle("pasada", j < indice);
+    const pasada = j < indice;
     el.classList.toggle("oculta", j < indice - 1 || j > indice + 1);
-    el.style.zIndex = j < indice ? j : total - j;
+    el.style.zIndex = pasada ? j : total - j;
+    if (pasada === el.classList.contains("pasada")) return;
+    girar(el, pasada);
   });
   $("#libro").classList.toggle("abierto", indice > 0);
   $("#contador").textContent = `${indice + 1} / ${total}`;
@@ -203,6 +205,21 @@ function irA(indice) {
   const id = paginas[indice].id;
   if (id === "molly") animarCarta();
   if (id === "recuerdos") cargarRecuerdos();
+}
+
+// Gira una hoja en 3D y, al terminar, la deja plana (reposada) para que la GPU no dibuje costuras.
+function girar(el, pasar) {
+  clearTimeout(el._giro);
+  el.style.transition = "none";
+  el.classList.remove("reposada");
+  el.classList.add("girando");
+  void el.offsetWidth;
+  el.style.transition = "";
+  el.classList.toggle("pasada", pasar);
+  el._giro = setTimeout(() => {
+    el.classList.remove("girando");
+    el.classList.toggle("reposada", pasar);
+  }, 1050);
 }
 
 function prepararNavegacion() {
