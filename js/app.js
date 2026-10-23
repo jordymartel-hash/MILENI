@@ -13,6 +13,14 @@ let paginas = [];
 let actual = -1;
 let baul = null; // conexión a los recuerdos
 
+// Vista previa en la PC de Jordy (http://localhost): sin cuenta regresiva y los recuerdos quedan solo en memoria,
+// para no ensuciar el álbum real de ella. En GitHub Pages nunca se activa.
+const DEMO = location.hostname === "localhost"; // las pruebas usan 127.0.0.1 y siguen el flujo real
+const baulDeMentira = () => {
+  let id = 0;
+  return { listar: async () => [], guardar: async (r) => ({ id: ++id, creado: new Date().toISOString(), ...r }) };
+};
+
 const escapar = (t) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 // ---------- Piezas reutilizables ----------
@@ -188,6 +196,7 @@ function irA(indice) {
     el.classList.toggle("oculta", j < indice - 1 || j > indice + 1);
     el.style.zIndex = j < indice ? j : total - j;
   });
+  $("#libro").classList.toggle("abierto", indice > 0);
   $("#contador").textContent = `${indice + 1} / ${total}`;
   $("#atras").disabled = indice === 0;
   $("#adelante").disabled = indice === total - 1;
@@ -423,9 +432,13 @@ function prepararFinal() {
 }
 
 async function leerConfesion() {
-  $("#sobre").classList.add("abierto");
+  const sobre = $("#sobre");
+  sobre.classList.add("abierto");
   confeti(efectos(), 24);
-  await esperar(700);
+  await esperar(800);
+  sobre.classList.add("guardado");
+  await esperar(450);
+  sobre.hidden = true;
   const caja = $("#confesion");
   caja.classList.add("visible");
   for (const linea of secreto.confesion) {
@@ -573,7 +586,8 @@ function prepararPuerta() {
       mensaje.textContent = "¡Es ella!";
       $("#clave").value = "";
       document.activeElement?.blur();
-      conectar(secreto.llaveRecuerdos).then((b) => { baul = b; }, () => {});
+      if (DEMO) baul = baulDeMentira();
+      else conectar(secreto.llaveRecuerdos).then((b) => { baul = b; }, () => {});
       setTimeout(despuesDeLaPuerta, 500);
     } catch (err) {
       mensaje.textContent = err.message !== "credenciales" ? "No pude cargar el álbum, revisa tu internet." : "Esa no es la llave... inténtalo otra vez.";
@@ -594,7 +608,7 @@ function mostrar(id) {
 }
 
 function despuesDeLaPuerta() {
-  if (faltante(Date.now()).listo) return abrirAlbum();
+  if (DEMO || faltante(Date.now()).listo) return abrirAlbum();
   $("#espera-pochita").innerHTML = personaje("pochi");
   mostrar("espera");
   const pintar = () => {
